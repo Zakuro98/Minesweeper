@@ -121,6 +121,9 @@ function new_grid(width, height, mines) {
                         highlight_on(i + 1, j + 1)
                 }
             })
+            tile.addEventListener("dblclick", function () {
+                chord_tile(i, j)
+            })
             tile.addEventListener("mouseup", function (event) {
                 if (event.button === 1) {
                     if (i > 0) highlight_off(i - 1, j)
