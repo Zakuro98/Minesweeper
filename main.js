@@ -45,6 +45,15 @@ function new_grid(width, height, mines) {
     game.width = width
     game.height = height
     game.mines = mines
+
+    if (game.width < 5) game.width = 5
+    if (game.width > 100) game.width = 100
+    if (game.height < 5) game.height = 5
+    if (game.height > 100) game.height = 100
+    if (game.mines < 1) game.mines = 1
+    if (game.mines > game.width * game.height - 9)
+        game.mines = game.width * game.height - 9
+
     game.first_click = false
     game.end = false
     game.flags = 0
