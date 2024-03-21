@@ -1,0 +1,176 @@
+body {
+    background: black;
+    font-size: 36px;
+    font-family: "Fira Sans";
+    font-weight: 900;
+    padding: 1em;
+    overflow: auto;
+}
+
+#setup_panel {
+    display: none;
+}
+
+.input_panel {
+    display: flex;
+    margin-bottom: 0.5em;
+}
+
+.input_text {
+    color: white;
+    font-size: 24px;
+    font-family: "Fira Sans";
+    font-weight: 400;
+    margin-right: 1em;
+    margin-top: 0.2em;
+    margin-bottom: 0em;
+}
+
+input {
+    background: black;
+    color: white;
+    border: solid 0.05em white;
+    font-size: 18px;
+    font-family: "Fira Sans";
+    font-weight: 400;
+    padding: 0.3em;
+    width: 3em;
+    margin-right: 1em;
+}
+
+#begin {
+    margin-top: 2em;
+}
+
+#game_panel {
+    display: block;
+}
+
+#info_block {
+    display: flex;
+    justify-content: space-around;
+    margin-left: 1em;
+    width: 15em;
+}
+
+#game_flags {
+    font-family: "Fira Mono";
+    display: inline;
+    color: white;
+    font-weight: 400;
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+#game_time {
+    font-family: "Fira Mono";
+    display: inline;
+    color: white;
+    font-weight: 400;
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+#main_grid {
+    margin: 1em;
+    width: 22.5em;
+    padding-right: 2em;
+}
+
+.grid_row {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+}
+
+.grid_cell {
+    width: 1.5em;
+    height: 1.5em;
+    margin: 0em;
+    box-sizing: border-box;
+}
+
+.odd {
+    background: #3a081d
+}
+
+.even {
+    background: #430a21;
+}
+
+.number.odd:hover {
+    background: #6b0a31;
+}
+
+.number.even:hover {
+    background: #750b35;
+}
+
+.blank.odd {
+    background: #bf004d;
+    cursor: pointer;
+}
+
+.blank.even {
+    background: #d50055;
+    cursor: pointer;
+}
+
+.finish.odd {
+    background: #bf004d;
+}
+
+.finish.even {
+    background: #d50055;
+}
+
+.blank.odd:hover, .blank.highlight.odd {
+    background: #ff247b;
+}
+
+.blank.even:hover, .blank.highlight.even {
+    background: #ff3d8b;
+}
+
+.grid_number {
+    color: white;
+    -webkit-text-stroke: 0.035em white;
+    filter: drop-shadow(0.1em 0.1em 0.1em black);
+    text-align: center;
+    margin-top: 0.14em;
+    margin-bottom: 0em;
+    user-select: none;
+}
+
+.grid_empty {
+    margin: 0em;
+    user-select: none;
+}
+
+.grid_emoji {
+    color: white;
+    filter: drop-shadow(0.05em 0.05em 0.1em black);
+    text-align: center;
+    margin-top: 0em;
+    margin-bottom: 0em;
+    user-select: none;
+}
+
+button {
+    background: black;
+    color: white;
+    border: solid 0.05em white;
+    font-size: 24px;
+    font-family: "Fira Sans";
+    font-weight: 400;
+    padding: 0.3em;
+    cursor: pointer;
+}
+
+#exit_block {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.25em;
+    margin-left: 1em;
+    width: 15em;
+}

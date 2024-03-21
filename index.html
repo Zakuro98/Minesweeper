@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta charset="utf-8">
+        <meta name="keywords" content="minesweeper">
+        <meta name="description" content="sweep your mines">
+        <title>Minesweeper: Zakuro Edition</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400&family=Fira+Sans:wght@400;900">
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <main>
+            <div id="setup_panel">
+                <div class="input_panel">
+                    <p class="input_text">
+                        Width:
+                    </p>
+                    <input id="width" type="number" value="15" min="5">
+                </div>
+                <div class="input_panel">
+                    <p class="input_text">
+                        Height:
+                    </p>
+                    <input id="height" type="number" value="10" min="5">
+                </div>
+                <div class="input_panel">
+                    <p class="input_text">
+                        Mines:
+                    </p>
+                    <input id="mines" type="number" value="23" min="1" max="141">
+                    <p id="max_mines" class="input_text">
+                        (max: 141) (suggested: 23)
+                    </p>
+                </div>
+                <button id="begin" onclick="begin()">
+                    Begin
+                </button>
+            </div>
+
+            <div id="game_panel">
+                <div id="info_block">
+                    <p id="game_flags">
+                        🚩 14
+                    </p>
+                    <p id="game_time">
+                        ⏱️ 0.00
+                    </p>
+                </div>
+
+                <div id="main_grid"></div>
+
+                <div id="exit_block">
+                    <button onclick="board_setup()">
+                        Setup another board
+                    </button>
+                </div>
+            </div>
+        </main>
+        <script src="main.js" charset="utf-8" type="text/javascript"></script>
+    </body>
+</html>
