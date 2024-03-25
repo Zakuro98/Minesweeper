@@ -556,6 +556,10 @@ function begin() {
         Number(document.getElementById("height").value),
         Number(document.getElementById("mines").value)
     )
+    document.documentElement.style.setProperty(
+        "--hue",
+        Number(document.getElementById("hue").value)
+    )
 }
 
 function format_time(time) {
@@ -594,12 +598,22 @@ function time_update() {
         Number(document.getElementById("width").value) *
         Number(document.getElementById("height").value)
     document.getElementById("mines").max = size - 9
+    let density = (19 + size ** 0.5) / 200
+    if (density > 0.25) density = 0.25
     document.getElementById("max_mines").innerHTML =
         "(max: " +
         (size - 9) +
         ") (suggested: " +
-        Math.floor(size * ((19 + size ** 0.5) / 200)) +
+        Math.floor(size * density) +
         ")"
+    document.getElementById("mine_density").innerHTML =
+        "Density: " +
+        ((Number(document.getElementById("mines").value) * 100) / size).toFixed(
+            1
+        ) +
+        "%"
+    document.getElementById("hue").style.color =
+        "hsl(" + Number(document.getElementById("hue").value) + ",100%,50%)"
 }
 
 new_grid(15, 10, 23)
