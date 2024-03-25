@@ -1,3 +1,7 @@
+:root {
+    --hue: 336;
+}
+
 body {
     background: black;
     font-size: 36px;
@@ -14,6 +18,10 @@ body {
 .input_panel {
     display: flex;
     margin-bottom: 0.5em;
+}
+
+#hue_panel {
+    margin-top: 1.5em;
 }
 
 .input_text {
@@ -91,45 +99,45 @@ input {
 }
 
 .odd {
-    background: #3a081d
+    background: hsl(var(--hue), 76%, 13%)
 }
 
 .even {
-    background: #430a21;
+    background: hsl(var(--hue), 74%, 15%);
 }
 
 .number.odd:hover {
-    background: #6b0a31;
+    background: hsl(var(--hue), 83%, 23%);
 }
 
 .number.even:hover {
-    background: #750b35;
+    background: hsl(var(--hue), 83%, 25%);
 }
 
 .blank.odd {
-    background: #bf004d;
+    background: hsl(var(--hue), 100%, 37%);
     cursor: pointer;
 }
 
 .blank.even {
-    background: #d50055;
+    background: hsl(var(--hue), 100%, 42%);
     cursor: pointer;
 }
 
 .finish.odd {
-    background: #bf004d;
+    background: hsl(var(--hue), 100%, 37%);
 }
 
 .finish.even {
-    background: #d50055;
+    background: hsl(var(--hue), 100%, 42%);
 }
 
 .blank.odd:hover, .blank.highlight.odd {
-    background: #ff247b;
+    background: hsl(var(--hue), 100%, 57%);
 }
 
 .blank.even:hover, .blank.highlight.even {
-    background: #ff3d8b;
+    background: hsl(var(--hue), 100%, 62%);
 }
 
 .grid_number {
@@ -173,4 +181,8 @@ button {
     margin-top: 1.25em;
     margin-left: 1em;
     width: 15em;
+}
+
+#board_size {
+    margin-left: 1em;
 }
