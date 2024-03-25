@@ -33,6 +33,17 @@
                         (max: 141) (suggested: 23)
                     </p>
                 </div>
+                <div class="input_panel">
+                    <p id="mine_density" class="input_text">
+                        Density: 15.3%
+                    </p>
+                </div>
+                <div id="hue_panel" class="input_panel">
+                    <p class="input_text">
+                        Hue:
+                    </p>
+                    <input id="hue" type="number" value="336" min="0" max="359">
+                </div>
                 <button id="begin" onclick="begin()">
                     Begin
                 </button>
@@ -51,8 +62,11 @@
                 <div id="main_grid"></div>
 
                 <div id="exit_block">
-                    <button onclick="board_setup()">
-                        Setup another board
+                    <button onclick="begin()">
+                        New board
+                    </button>
+                    <button id="board_size" onclick="board_setup()">
+                        Change board
                     </button>
                 </div>
             </div>
