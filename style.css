@@ -20,8 +20,8 @@ body {
     margin-bottom: 0.5em;
 }
 
-#hue_panel {
-    margin-top: 1.5em;
+#chord_panel {
+    margin-top: 1.25em;
 }
 
 .input_text {
@@ -46,8 +46,20 @@ input {
     margin-right: 1em;
 }
 
+select {
+    background: black;
+    color: white;
+    border: solid 0.05em white;
+    font-size: 18px;
+    font-family: "Fira Sans";
+    font-weight: 400;
+    padding: 0.3em;
+    width: 9em;
+    margin-right: 1em;
+}
+
 #begin {
-    margin-top: 2em;
+    margin-top: 1.5em;
 }
 
 #game_panel {
