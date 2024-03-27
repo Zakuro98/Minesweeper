@@ -38,15 +38,27 @@
                         Density: 15.3%
                     </p>
                 </div>
+                <button id="begin" onclick="begin()">
+                    Begin
+                </button>
+                <div id="chord_panel" class="input_panel">
+                    <p class="input_text">
+                        Chording:
+                    </p>
+                    <select id="chord">
+                        <option value="left">Left click</option>
+                        <option value="right">Right click</option>
+                        <option value="double">Double click</option>
+                        <option value="both" selected>Left+right click</option>
+                        <option value="middle">Middle click</option>
+                    </select>
+                </div>
                 <div id="hue_panel" class="input_panel">
                     <p class="input_text">
                         Hue:
                     </p>
                     <input id="hue" type="number" value="336" min="0" max="359">
                 </div>
-                <button id="begin" onclick="begin()">
-                    Begin
-                </button>
             </div>
 
             <div id="game_panel">
