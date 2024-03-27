@@ -4,29 +4,14 @@ let game = {
     mines: 3,
     first_click: false,
     end: false,
-    mouse: [-1, -1],
+    chord: "both",
     flags: 0,
     time: 0,
     cleared: 0,
 
     grid_value: undefined,
     grid_state: undefined,
-}
-
-function shuffle(array) {
-    let current_index = array.length,
-        random_index
-
-    while (current_index > 0) {
-        random_index = Math.floor(Math.random() * current_index)
-        current_index--
-        ;[array[current_index], array[random_index]] = [
-            array[random_index],
-            array[current_index],
-        ]
-    }
-
-    return array
+    grid_list: undefined,
 }
 
 const number_color = [
@@ -40,6 +25,18 @@ const number_color = [
     "#000000",
     "#808080",
 ]
+
+function shuffle(array) {
+    var i = array.length,
+        j,
+        temp
+    while (--i > 0) {
+        j = Math.floor(Math.random() * (i + 1))
+        temp = array[j]
+        array[j] = array[i]
+        array[i] = temp
+    }
+}
 
 function new_grid(width, height, mines) {
     game.width = width
@@ -62,21 +59,23 @@ function new_grid(width, height, mines) {
 
     game.grid_value = new Array(game.width)
     game.grid_state = new Array(game.width)
+    game.grid_list = new Array()
     for (let i = 0; i < game.width; i++) {
-        game.grid_value[i] = new Array(game.height)
+        game.grid_value[i] = new Array(game.height).fill(0)
         game.grid_state[i] = new Array(game.height).fill("blank")
     }
 
-    let grid_string = new Array(game.width * game.height).fill(0)
-    for (let i = 0; i < game.mines; i++) {
-        grid_string[i] = 9
-    }
-    shuffle(grid_string)
-
     for (let i = 0; i < game.width; i++) {
         for (let j = 0; j < game.height; j++) {
-            game.grid_value[i][j] = grid_string[j * game.width + i]
+            game.grid_list.push([i, j])
         }
+    }
+    shuffle(game.grid_list)
+
+    for (let i = 0; i < game.mines; i++) {
+        let rand = Math.floor(Math.random() * game.grid_list.length)
+        game.grid_value[game.grid_list[rand][0]][game.grid_list[rand][1]] = 9
+        game.grid_list.splice(rand, 1)
     }
 
     document.getElementById("main_grid").style.width = game.width * 1.5 + "em"
@@ -101,15 +100,25 @@ function new_grid(width, height, mines) {
             tile.addEventListener("mousedown", function (event) {
                 if (event.buttons === 1) {
                     open_tile(i, j)
+                    if (game.chord === "left") {
+                        chord_tile(i, j)
+                    }
                 }
                 if (event.buttons === 2) {
                     flag_tile(i, j)
+                    if (game.chord === "right") {
+                        chord_tile(i, j)
+                    }
                 }
                 if (event.buttons === 3) {
-                    chord_tile(i, j)
+                    if (game.chord === "both") {
+                        chord_tile(i, j)
+                    }
                 }
                 if (event.buttons === 4) {
-                    chord_tile(i, j)
+                    if (game.chord === "middle") {
+                        chord_tile(i, j)
+                    }
                     if (i > 0) highlight_on(i - 1, j)
                     if (i < game.width - 1) highlight_on(i + 1, j)
                     if (j > 0) highlight_on(i, j - 1)
@@ -122,7 +131,9 @@ function new_grid(width, height, mines) {
                 }
             })
             tile.addEventListener("dblclick", function () {
-                chord_tile(i, j)
+                if (game.chord === "double") {
+                    chord_tile(i, j)
+                }
             })
             tile.addEventListener("mouseup", function (event) {
                 if (event.button === 1) {
@@ -268,31 +279,14 @@ function number_tiles() {
     }
 }
 
-function move_mine(c, r, fc, fr) {
+function move_mine(c, r) {
     if (game.grid_value[c][r] === 9) {
-        let tc = Math.floor(Math.random() * game.width)
-        let tr = Math.floor(Math.random() * game.height)
-        while (tc >= fc - 1 && tc <= fc + 1 && tr >= fr - 1 && tr <= fr + 1) {
-            tc = Math.floor(Math.random() * game.width)
-            tr = Math.floor(Math.random() * game.height)
-        }
-
-        while (game.grid_value[tc][tr] === 9) {
-            tc = Math.floor(Math.random() * game.width)
-            tr = Math.floor(Math.random() * game.height)
-            while (
-                tc >= fc - 1 &&
-                tc <= fc + 1 &&
-                tr >= fr - 1 &&
-                tr <= fr + 1
-            ) {
-                tc = Math.floor(Math.random() * game.width)
-                tr = Math.floor(Math.random() * game.height)
-            }
-        }
-
+        let rand = Math.floor(Math.random() * game.grid_list.length)
+        let tc = game.grid_list[rand][0]
+        let tr = game.grid_list[rand][1]
         game.grid_value[c][r] = 0
         game.grid_value[tc][tr] = 9
+        game.grid_list.splice(rand, 1)
     }
 }
 
@@ -301,26 +295,42 @@ function open_tile(c, r) {
         if (game.grid_state[c][r] === "blank" && !game.end) {
             if (game.first_click === false) {
                 game.first_click = true
-                move_mine(c, r, c, r)
-                if (c > 0) move_mine(c - 1, r, c, r)
-                if (c < game.width - 1) move_mine(c + 1, r, c, r)
-                if (r > 0) move_mine(c, r - 1, c, r)
-                if (c > 0 && r > 0) move_mine(c - 1, r - 1, c, r)
-                if (c < game.width - 1 && r > 0) move_mine(c + 1, r - 1, c, r)
-                if (r < game.height - 1) move_mine(c, r + 1, c, r)
-                if (c > 0 && r < game.height - 1) move_mine(c - 1, r + 1, c, r)
+                for (let i = game.grid_list.length - 1; i > 0; i--) {
+                    if (
+                        game.grid_list[i][0] >= c - 1 &&
+                        game.grid_list[i][0] <= c + 1 &&
+                        game.grid_list[i][1] >= r - 1 &&
+                        game.grid_list[i][1] <= r + 1
+                    ) {
+                        game.grid_list.splice(i, 1)
+                    }
+                }
+                move_mine(c, r)
+                if (c > 0) move_mine(c - 1, r)
+                if (c < game.width - 1) move_mine(c + 1, r)
+                if (r > 0) move_mine(c, r - 1)
+                if (c > 0 && r > 0) move_mine(c - 1, r - 1)
+                if (c < game.width - 1 && r > 0) move_mine(c + 1, r - 1)
+                if (r < game.height - 1) move_mine(c, r + 1)
+                if (c > 0 && r < game.height - 1) move_mine(c - 1, r + 1)
                 if (c < game.width - 1 && r < game.height - 1)
-                    move_mine(c + 1, r + 1, c, r)
+                    move_mine(c + 1, r + 1)
 
                 number_tiles()
             }
 
             game.grid_state[c][r] = "clear"
             game.cleared++
-            if (game.cleared >= game.width * game.height - game.mines) {
+            if (
+                game.cleared >= game.width * game.height - game.mines &&
+                game.grid_value[c][r] !== 9
+            ) {
                 for (let i = 0; i < game.width; i++) {
                     for (let j = 0; j < game.height; j++) {
                         if (game.grid_state[i][j] !== "clear") {
+                            if (game.grid_state[i][j] === "blank") {
+                                flag_tile(i, j)
+                            }
                             if ((i + j) % 2 === 0)
                                 document.getElementById(
                                     "cell_" + i + "_" + j
@@ -332,7 +342,6 @@ function open_tile(c, r) {
                         }
                     }
                 }
-                game.flags = game.mines
                 game.end = true
                 let highlight = document.querySelectorAll(
                     ".grid_cell.number.even"
@@ -560,6 +569,7 @@ function begin() {
         "--hue",
         Number(document.getElementById("hue").value)
     )
+    game.chord = document.getElementById("chord").value
 }
 
 function format_time(time) {
