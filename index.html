@@ -16,27 +16,38 @@
                     <p class="input_text">
                         Width:
                     </p>
-                    <input id="width" type="number" value="15" min="5" max="100">
+                    <input id="width" type="number" value="15" min="5" max="50">
                 </div>
                 <div class="input_panel">
                     <p class="input_text">
                         Height:
                     </p>
-                    <input id="height" type="number" value="10" min="5" max="100">
+                    <input id="height" type="number" value="10" min="5" max="25">
                 </div>
                 <div class="input_panel">
                     <p class="input_text">
                         Mines:
                     </p>
-                    <input id="mines" type="number" value="23" min="1" max="141">
+                    <input id="mines" type="number" value="23" min="1" max="45">
                     <p id="max_mines" class="input_text">
-                        (max: 141) (suggested: 23)
+                        (max: 45) (suggested: 23)
                     </p>
                 </div>
                 <div class="input_panel">
                     <p id="mine_density" class="input_text">
                         Density: 15.3%
                     </p>
+                </div>
+                <div id="difficulty_panel" class="input_panel">
+                    <p class="input_text">
+                        Difficulty:
+                    </p>
+                    <select id="difficulty">
+                        <option value="0">Easy</option>
+                        <option value="1" selected>Normal</option>
+                        <option value="2">Hard</option>
+                        <option value="3">Expert</option>
+                    </select>
                 </div>
                 <button id="begin" onclick="begin()">
                     Begin
@@ -64,7 +75,7 @@
             <div id="game_panel">
                 <div id="info_block">
                     <p id="game_flags">
-                        🚩 14
+                        🚩 23
                     </p>
                     <p id="game_time">
                         ⏱️ 0.00
