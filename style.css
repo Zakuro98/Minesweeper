@@ -11,6 +11,10 @@ body {
     overflow: auto;
 }
 
+body.generating, body.generating * {
+    cursor: wait !important;
+}
+
 #setup_panel {
     display: none;
 }
@@ -111,45 +115,45 @@ select {
 }
 
 .odd {
-    background: hsl(var(--hue), 76%, 13%)
+    background: hsl(var(--hue), 66%, 13%)
 }
 
 .even {
-    background: hsl(var(--hue), 74%, 15%);
+    background: hsl(var(--hue), 64%, 15%);
 }
 
 .number.odd:hover {
-    background: hsl(var(--hue), 83%, 23%);
+    background: hsl(var(--hue), 73%, 23%);
 }
 
 .number.even:hover {
-    background: hsl(var(--hue), 83%, 25%);
+    background: hsl(var(--hue), 73%, 25%);
 }
 
 .blank.odd {
-    background: hsl(var(--hue), 100%, 37%);
+    background: hsl(var(--hue), 90%, 37%);
     cursor: pointer;
 }
 
 .blank.even {
-    background: hsl(var(--hue), 100%, 42%);
+    background: hsl(var(--hue), 90%, 42%);
     cursor: pointer;
 }
 
 .finish.odd {
-    background: hsl(var(--hue), 100%, 37%);
+    background: hsl(var(--hue), 90%, 37%);
 }
 
 .finish.even {
-    background: hsl(var(--hue), 100%, 42%);
+    background: hsl(var(--hue), 90%, 42%);
 }
 
 .blank.odd:hover, .blank.highlight.odd {
-    background: hsl(var(--hue), 100%, 57%);
+    background: hsl(var(--hue), 90%, 57%);
 }
 
 .blank.even:hover, .blank.highlight.even {
-    background: hsl(var(--hue), 100%, 62%);
+    background: hsl(var(--hue), 90%, 62%);
 }
 
 .grid_number {
