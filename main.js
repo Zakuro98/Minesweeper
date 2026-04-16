@@ -350,7 +350,7 @@ function layer_2(grid_value, state) {
     //collect all clues: digit tiles with at least 1 blank
     const active = []
     for (let i = 0; i < game.width; i++) {
-        for (let j = 0; j < game.width; j++) {
+        for (let j = 0; j < game.height; j++) {
             if (state[i][j] !== "clear") continue
             const value = grid_value[i][j]
             if (value === 0 || value === 9) continue
