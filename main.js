@@ -343,7 +343,7 @@ function layer_1(grid_value, state) {
     return progress
 }
 
-//solver layer 2: subset deduction
+//solver layer 2: intersection deduction
 function layer_2(grid_value, state) {
     let progress = false
 
@@ -366,52 +366,76 @@ function layer_2(grid_value, state) {
         }
     }
 
-    //check all ordered pairs
+    //helper: apply direct deduction to a region with known exact mine count
+    function apply_region(cells, count) {
+        if (cells.length === 0) return
+        if (count === 0) {
+            //all safe
+            for (const [c, r] of cells) {
+                if (state[c][r] === "blank") {
+                    simulate_open(grid_value, state, c, r)
+                    progress = true
+                }
+            }
+        } else if (count === cells.length) {
+            //all mines
+            for (const [c, r] of cells) {
+                if (state[c][r] === "blank") {
+                    state[c][r] = "flag"
+                    progress = true
+                }
+            }
+        }
+    }
+
+    //check all unordered pairs
     for (let i = 0; i < active.length; i++) {
-        for (let j = 0; j < active.length; j++) {
-            if (i === j) continue
+        for (let j = i + 1; j < active.length; j++) {
             const a = active[i]
             const b = active[j]
 
             if (Math.abs(a.c - b.c) > 2 || Math.abs(a.r - b.r) > 2) continue
 
-            const subset = a.unknowns.every(([ac, ar]) =>
-                b.unknowns.some(([bc, br]) => bc === ac && br === ar),
-            )
-            if (!subset) continue
-
-            const extras = b.unknowns.filter(
-                ([bc, br]) =>
-                    !a.unknowns.some(([ac, ar]) => ac === bc && ar === br),
-            )
-            if (extras.length === 0) continue
-
-            const diff = b.remaining - a.remaining
-
-            if (diff === extras.length) {
-                //all extras are mines
-                for (const [ec, er] of extras) {
-                    if (state[ec][er] === "blank") {
-                        state[ec][er] = "flag"
-                        progress = true
-                    }
-                }
-            } else if (diff === 0) {
-                //all extras are safe
-                for (const [ec, er] of extras) {
-                    if (state[ec][er] === "blank") {
-                        simulate_open(grid_value, state, ec, er)
-                        progress = true
-                    }
-                }
+            //partition unknowns into shared, only_a, only_b
+            const b_set = new Set(b.unknowns.map(([c, r]) => c + "," + r))
+            const shared = []
+            const only_a = []
+            for (const [c, r] of a.unknowns) {
+                if (b_set.has(c + "," + r)) shared.push([c, r])
+                else only_a.push([c, r])
             }
+            if (shared.length === 0) continue
+
+            const a_set = new Set(a.unknowns.map(([c, r]) => c + "," + r))
+            const only_b = b.unknowns.filter(
+                ([c, r]) => !a_set.has(c + "," + r),
+            )
+
+            //bounds on mines in shared region
+            const ms_min = Math.max(
+                0,
+                a.remaining - only_a.length,
+                b.remaining - only_b.length,
+            )
+            const ms_max = Math.min(shared.length, a.remaining, b.remaining)
+
+            //layer 2 only deduces when all three regions have exact need
+            if (ms_min !== ms_max) continue
+
+            const ms = ms_min
+            const ma = a.remaining - ms
+            const mb = b.remaining - ms
+
+            apply_region(only_a, ma)
+            apply_region(only_b, mb)
+            apply_region(shared, ms)
         }
     }
 
     return progress
 }
 
-//solver layer 3: general mine counting
+//solver layer 3: intersection chaining
 function layer_3(grid_value, state, total_mines) {
     let flag_count = 0
     for (let i = 0; i < game.width; i++) {
@@ -429,15 +453,18 @@ function layer_3(grid_value, state, total_mines) {
         return sorted.join(",") + ":" + need
     }
 
-    function subset_extras(a_unknowns, b_unknowns) {
-        if (a_unknowns.length >= b_unknowns.length) return null
+    function partition(a_unknowns, b_unknowns) {
         const b_set = new Set(b_unknowns.map(([c, r]) => c + "," + r))
+        const shared = []
+        const only_a = []
         for (const [c, r] of a_unknowns) {
-            if (!b_set.has(c + "," + r)) return null
+            if (b_set.has(c + "," + r)) shared.push([c, r])
+            else only_a.push([c, r])
         }
-
+        if (shared.length === 0) return null
         const a_set = new Set(a_unknowns.map(([c, r]) => c + "," + r))
-        return b_unknowns.filter(([c, r]) => !a_set.has(c + "," + r))
+        const only_b = b_unknowns.filter(([c, r]) => !a_set.has(c + "," + r))
+        return { shared, only_a, only_b }
     }
 
     //build initial constraint pool from digit clues
@@ -480,39 +507,56 @@ function layer_3(grid_value, state, total_mines) {
 
     let processed = 0
 
-    function handle_subset(a, b) {
-        const extras = subset_extras(a.unknowns, b.unknowns)
-        if (extras === null) return
-        if (extras.length === 0) return
-
-        const diff = b.need - a.need
-
-        //definite deduction: all extras are safe
-        if (diff === 0) {
-            for (const [c, r] of extras) {
-                to_open.add(c + "," + r)
-            }
-            return
+    function mark_region(cells, lo, hi) {
+        if (cells.length === 0) return
+        if (hi === 0) {
+            for (const [c, r] of cells) to_open.add(c + "," + r)
+        } else if (lo === cells.length) {
+            for (const [c, r] of cells) to_flag.add(c + "," + r)
         }
+    }
 
-        //definite deduction: all extras are mines
-        if (diff === extras.length) {
-            for (const [c, r] of extras) {
-                to_flag.add(c + "," + r)
-            }
-            return
-        }
-
-        //indefinite: derive a new group
-        if (diff < 0 || diff > extras.length) return
+    function derive_region(cells, lo, hi) {
         if (derive_remaining <= 0) return
-
-        const key = constraint_key(extras, diff)
+        if (cells.length === 0) return
+        if (lo !== hi) return
+        //trivial pins (0 or full) are already covered by mark_region
+        if (lo === 0 || lo === cells.length) return
+        const key = constraint_key(cells, lo)
         if (pool_keys.has(key)) return
-
-        pool.push({ unknowns: extras, need: diff, key })
+        pool.push({ unknowns: cells, need: lo, key })
         pool_keys.add(key)
         derive_remaining--
+    }
+
+    function handle_pair(a, b) {
+        const parts = partition(a.unknowns, b.unknowns)
+        if (parts === null) return
+        const { shared, only_a, only_b } = parts
+
+        const ms_min = Math.max(
+            0,
+            a.need - only_a.length,
+            b.need - only_b.length,
+        )
+        const ms_max = Math.min(shared.length, a.need, b.need)
+        if (ms_min > ms_max) return
+
+        const ma_lo = a.need - ms_max
+        const ma_hi = a.need - ms_min
+        const mb_lo = b.need - ms_max
+        const mb_hi = b.need - ms_min
+
+        //direct deductions
+        mark_region(only_a, ma_lo, ma_hi)
+        mark_region(only_b, mb_lo, mb_hi)
+        mark_region(shared, ms_min, ms_max)
+
+        //derivation: if any region's count is pinned, push it as a new constraint
+        //(if one region is pinned, all three are, since they share the same slack)
+        derive_region(only_a, ma_lo, ma_hi)
+        derive_region(only_b, mb_lo, mb_hi)
+        derive_region(shared, ms_min, ms_max)
     }
 
     //main loop: process each constraint against all previously-processed ones
@@ -521,8 +565,7 @@ function layer_3(grid_value, state, total_mines) {
 
         for (let i = 0; i < processed; i++) {
             const other = pool[i]
-            handle_subset(other, current)
-            handle_subset(current, other)
+            handle_pair(other, current)
 
             if (derive_remaining <= 0) break
             if (to_open.size > 0 || to_flag.size > 0) break
